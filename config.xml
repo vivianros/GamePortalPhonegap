@@ -108,6 +108,10 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <plugin name="cordova-plugin-whitelist" spec="~1.3.3" />
-    <plugin name="cordova-plugin-contacts" spec="^3.0.1" />
+    <plugin name="cordova-plugin-contacts" spec="^3.0.1">
+        <variable name="CONTACTS_USAGE_DESCRIPTION" value="Games Portal wants to use your contacts" />
+    </plugin>
+    <plugin name="cordova-plugin-sms" spec="^1.0.5" />
+    <plugin name="cordova-sms-plugin" spec="^0.1.11" />
     <engine name="android" spec="~7.0.0" />
 </widget>
