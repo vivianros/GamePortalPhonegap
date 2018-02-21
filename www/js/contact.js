@@ -11,6 +11,25 @@ var app = {
         document.addEventListener('deviceready', onDeviceReady, false);
     },
 
+    sendSms: function(phoneNum) {
+        var number = phoneNum.toString(); /* iOS: ensure number is actually a string */
+        var message = "JOIN THE GAME";
+        console.log("number=" + number + ", message= " + message);
+
+        //CONFIGURATION
+        var options = {
+            replaceLineBreaks: false, // true to replace \n by a new line, false by default
+            android: {
+                intent: 'INTENT'  // send SMS with the native android SMS messaging
+                //intent: '' // send SMS without open any other app
+            }
+        };
+
+        var success = function () { alert('Message sent successfully'); };
+        var error = function (e) { alert('Message Failed:' + e); };
+        sms.send(number, message, options, success, error);
+    },
+
 };
 
  function onDeviceReady() {           
@@ -27,6 +46,7 @@ function onSuccess(contacts) {
 }
 
 function alertContact(contacts) {
+    var start = new Date().getTime();
     var aResult = [];
     for (var i = 0; contacts[i]; i++) {
         console.log("Display Name = " + contacts[i].displayName);   
@@ -50,11 +70,14 @@ function alertContact(contacts) {
         var li = '';
         for (var i = 0; aResult[i]; i++) {
             for (var j = 0 ; aResult[i].phone[j]; j++) {
-                alert(aResult[i].name +"--------"+ aResult[i].phone[j].type+"-----"+aResult[i].phone[j].value);
-                li += '<li style="text-decoration:none;">'+aResult[i].name+' '+aResult[i].phone[j].value+'</li>';
+                //alert(aResult[i].name +"--------"+ aResult[i].phone[j].type+"-----"+aResult[i].phone[j].value);
+                li += '<li style="text-decoration:none;">'+aResult[i].name+' '+aResult[i].phone[j].value+'  '+'<input type="button" onclick="app.sendSms('+aResult[i].phone[j].value+')" value="INVITE" /></li>';
             };
         };
         $("#contact").html(li);
+        var end = new Date().getTime();
+        var p = '<p id = "time">Total time used to get all contacts: '+(end - start)+'ms</p>';
+        $("#time").html(p);
 
     }     
 
