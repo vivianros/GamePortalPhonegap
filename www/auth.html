@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+<script src="js/phoneauth.js">   </script> 
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+<script type="text/javascript" charset="utf-8">
+    app.initialize();
+</script>  
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhoneNum login Example</title>
+</head>
+<body>
+  <div class="creat-account">
+      <input tpye="number" id="phone"></input>
+      <label for="phone">Enter your phone number...</label>
+      <input type="button"  onclick=" createAccount();" value="Get the Security Code" />
+      <input tpye="number" id="security"></input>
+      <label for="security">Enter your Security Code...</label>
+      <input type="button"  onclick="onSubmit();" value="Submit" />
+  </div>
+  
+</body>
+</html>
