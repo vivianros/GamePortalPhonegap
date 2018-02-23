@@ -12,7 +12,7 @@ var app = {
     },
 
     sendSms: function(phoneNum) {
-        var number = phoneNum.toString(); /* iOS: ensure number is actually a string */
+        var number = phoneNum; /* iOS: ensure number is actually a string */
         var message = "JOIN THE GAME";
         console.log("number=" + number + ", message= " + message);
 
@@ -71,7 +71,8 @@ function alertContact(contacts) {
         for (var i = 0; aResult[i]; i++) {
             for (var j = 0 ; aResult[i].phone[j]; j++) {
                 //alert(aResult[i].name +"--------"+ aResult[i].phone[j].type+"-----"+aResult[i].phone[j].value);
-                li += '<li style="text-decoration:none;">'+aResult[i].name+' '+aResult[i].phone[j].value+'  '+'<input type="button" onclick="app.sendSms('+aResult[i].phone[j].value+')" value="INVITE" /></li>';
+            var legalPhoneNum = aResult[i].phone[j].value.toString().replace(/[&\|\s\\\*^%$#@\-]/g,"");
+                li += '<li style="text-decoration:none;">'+aResult[i].name+' '+aResult[i].phone[j].value+'  '+'<input type="button" onclick="app.sendSms('+legalPhoneNum+')" value="INVITE" /></li>';
             };
         };
         $("#contact").html(li);
@@ -88,4 +89,3 @@ function alertContact(contacts) {
   function intent(){
       onDeviceReady();
     }
-      
