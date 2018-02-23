@@ -1,12 +1,12 @@
-var firebase = require("firebase");
-
+//var firebase = require("firebase");
+/* 
 var config = {
     apiKey: "AIzaSyDA5tCzxNzykHgaSv1640GanShQze3UK-M",
     authDomain: "universalgamemaker.firebaseapp.com",
     databaseURL: "https://universalgamemaker.firebaseio.com",
     storageBucket: "universalgamemaker.appspot.com",
   };
- 
+ */
   
  
 
@@ -14,7 +14,6 @@ var config = {
 var app = {
     // Application Constructor
     initialize: function() {
-        alert("initialize");
         this.bindEvents();
     },
     // Bind Event Listeners
@@ -22,28 +21,27 @@ var app = {
     // Bind any events that are required on startup. Common events are:
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
-        alert("ifReady");
         document.addEventListener('deviceready', this.onDeviceReady, false);
     },
     // deviceready Event Handler
     onDeviceReady: function() {
-        alert('Ready');
-        firebase.initializeApp(config);
+//        firebase.initializeApp(config);
     },
 };
 
 function createAccount(){
+   // firebase.initializeApp(defaultAppConfig);
 
-    // Initialize the default app
-    var defaultApp = firebase.initializeApp(defaultAppConfig);
-    console.log(defaultApp.name);  // "[DEFAULT]"
-    // You can retrieve services via the defaultApp variable...
-    var defaultAuth = defaultApp.auth();
+    // Initialize another app with a different config
+    //var otherApp = firebase.initializeApp(otherAppConfig, "other");
+    //var defaultAuth = firebase.auth();    
 
-    var phoneNum = document.getElementById('Phone');
+    var phoneNum = $("#phone").val();
     alert(phoneNum);
-    var appVerifier = window.recaptchaVerifier;
-    firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+   
+    firebase.auth().signInWithPhoneNumber(phoneNum, new firebase.auth.RecaptchaVerifier('sign-in-button', {
+        'size': 'invisible'
+      }))
     .then(function (confirmationResult) {
       // SMS sent. Prompt user to type the code from the message, then sign the
       // user in with confirmationResult.confirm(code).
@@ -52,10 +50,11 @@ function createAccount(){
     }).catch(function (error) {
       // Error; SMS not sent
       //...
+      console.log(error);
       alert("SMS NOT SENT");
-      window.recaptchaVerifier.render().then(function(widgetId) {
-        grecaptcha.reset(widgetId);
-      });
+//      window.recaptchaVerifier.render().then(function(widgetId) {
+//        grecaptcha.reset(widgetId);
+//      });
     });
 }
 
