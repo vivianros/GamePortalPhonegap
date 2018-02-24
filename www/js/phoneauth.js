@@ -59,7 +59,8 @@ function createAccount(){
 }
 
 function onSubmit(){
-    var code = document.getElementById('security');
+    var code = $("#security").val();
+    var confirmationResult = window.confirmationResult;
     confirmationResult.confirm(code).then(function (result) {
         // User signed in successfully.
         var user = result.user;

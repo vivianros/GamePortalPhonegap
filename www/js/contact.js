@@ -42,7 +42,7 @@ var app = {
           
          
 function onSuccess(contacts) {
-    alertContact(contacts);
+    setTimeout(alertContact(contacts),200);
 }
 
 function alertContact(contacts) {
