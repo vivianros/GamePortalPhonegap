@@ -1,232 +1,317 @@
-var webRTC;
-
-function main(webRTC, iosrtc) {
-    function db() {
-        return firebase.database();
-    }
-
-    function messaging() {
-        return firebase.messaging();
-    }
-
-    function prettyJson(obj) {
-        return JSON.stringify(obj, null, '  ');
-    }
-
-    function writeDebug(val) {
-        document.getElementById('debug').innerHTML += val;
-    }
-
-    function dbSet(ref, writeVal) {
-        let writeValJson = prettyJson(writeVal);
-        ref.set(writeVal);
-    }
-
-    let uid = null;
-
-    function writeUser() {
-        let myUserPath = `/users/${uid}`;
-        dbSet(db().ref(myUserPath), {
-            publicFields: {
-                avatarImageUrl: `https://foo.bar/avatar`,
-                displayName: `Yoav Ziii`,
-                isConnected: true,
-                lastSeen: firebase.database.ServerValue.TIMESTAMP,
-            },
-            privateFields: {
-                email: `yoav.zibin@yooo.goo`,
-                createdOn: firebase.database.ServerValue.TIMESTAMP,
-                phoneNumber: ``,
-                facebookId: ``,
-                googleId: ``,
-                twitterId: ``,
-                githubId: ``,
-            },
-        });
-    }
-
-    function writeUserIfNeeded() {
-        uid = firebase.auth().currentUser.uid;
-        listenToMessages();
-        document.getElementById('myUserId').value = uid;
-        let myUserPath = `/users/${uid}`;
-        db().ref(myUserPath).once('value').then((snap) => {
-            let myUserInfo = snap.val();
-            if (!myUserInfo) {
-                writeUser();
-                return;
-            }
-        });
-    }
-
-    function firebaseLogin() {
-        firebase.auth().signInAnonymously()
-            .then(function (result) {
-                console.info(result);
-                writeUserIfNeeded();
-            }).catch(function (error) {
-                console.error(`Failed auth: `, error);
-            });
-    }
-
-    function init() {
-        // Initialize Firebase
-        let config = {
-            apiKey: "AIzaSyDA5tCzxNzykHgaSv1640GanShQze3UK-M",
-            authDomain: "universalgamemaker.firebaseapp.com",
-            databaseURL: "https://universalgamemaker.firebaseio.com",
-            projectId: "universalgamemaker",
-            storageBucket: "universalgamemaker.appspot.com",
-            messagingSenderId: "144595629077"
-        };
-        firebase.initializeApp(config);
-        firebaseLogin();
-    }
-
-    function sendMessage(signalType, signalData) {
-        if (!targetUserId) {
-            throw new Error("Missing targetUserId");
+function main() {
+    var webRTC;
+    (function (webRTC) {
+        function db() {
+            return firebase.database();
         }
-        let ref = db().ref(`users/${targetUserId}/privateButAddable/signal`).push();
-        let signalMsg = {
-            addedByUid: uid,
-            timestamp: firebase.database.ServerValue.TIMESTAMP,
-            signalData: JSON.stringify(signalData),
-            signalType: signalType,
-        };
-        dbSet(ref, signalMsg);
-    }
 
-    function listenToMessages() {
-        let path = `users/${uid}/privateButAddable/signal`;
-        db().ref(path).on('value', (snap) => {
-            let signals = snap.val();
-            console.log("Got signals=", signals);
-            if (!signals)
+        function messaging() {
+            return firebase.messaging();
+        }
+
+        function prettyJson(obj) {
+            return JSON.stringify(obj, null, '  ');
+        }
+
+        function dbSet(ref, writeVal) {
+            let writeValJson = prettyJson(writeVal);
+            console.log(`Writing path=`, ref.toString(), ` writeVal=`, writeValJson, `...`);
+            ref.set(writeVal);
+        }
+        let uid = null;
+
+        function writeUser() {
+            let myUserPath = `/gamePortal/gamePortalUsers/${uid}`;
+            dbSet(db().ref(myUserPath), {
+                publicFields: {
+                    isConnected: true,
+                    lastSeen: firebase.database.ServerValue.TIMESTAMP,
+                    supportsWebRTC: true,
+                },
+                privateFields: {
+                    createdOn: firebase.database.ServerValue.TIMESTAMP,
+                    phoneNumber: ``,
+                    newContacts: ``,
+                },
+            });
+        }
+
+        function writeUserIfNeeded() {
+            uid = 'uid' + Math.floor(100000 * Math.random());
+            console.info("My uid=", uid);
+            listenToMessages();
+            document.getElementById('myUserId').value = uid;
+            let myUserPath = `/gamePortal/gamePortalUsers/${uid}`;
+            db().ref(myUserPath).once('value').then((snap) => {
+                let myUserInfo = snap.val();
+                if (!myUserInfo) {
+                    writeUser();
+                    return;
+                }
+                console.log("User already exists");
+            });
+        }
+
+        function firebaseLogin() {
+            writeUserIfNeeded();
+        }
+
+        function init() {
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyC2p0MXPE-yIQjnNztbxlK2on7EAMnBO54",
+                authDomain: "mytest-a0c11.firebaseapp.com",
+                databaseURL: "https://mytest-a0c11.firebaseio.com",
+                projectId: "mytest-a0c11",
+                storageBucket: "mytest-a0c11.appspot.com",
+                messagingSenderId: "212624241094"
+            };
+            firebase.initializeApp(config);
+            firebaseLogin();
+        }
+
+        function sendMessage(targetUserId, signalType, signalData) {
+            if (!targetUserId)
+                throw new Error("Missing targetUserId");
+            let ref = db().ref(`/gamePortal/gamePortalUsers/${targetUserId}/privateButAddable/signals`).push();
+            let signalMsg = {
+                addedByUid: uid,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                signalData: JSON.stringify(signalData),
+                signalType: signalType,
+            };
+            dbSet(ref, signalMsg);
+        }
+        webRTC.sendMessage = sendMessage;
+
+        function listenToMessages() {
+            let path = `/gamePortal/gamePortalUsers/${uid}/privateButAddable/signals`;
+            db().ref(path).on('value', (snap) => {
+                let signals = snap.val();
+                console.log("Got signals=", signals);
+                if (!signals)
+                    return;
+                let signalIds = Object.keys(signals);
+                signalIds.sort((signalId1, signalId2) => signals[signalId1].timestamp - signals[signalId2].timestamp); // oldest entries are at the beginning
+                let updates = {};
+                const now = new Date().getTime();
+                for (let signalId of signalIds) {
+                    updates[signalId] = null;
+                    let signal = signals[signalId];
+                    if (now - /*ONE_MINUTE_MILLIS*/ 60 * 1000 > signal.timestamp) {
+                        console.warn("Ignoring signal because it's more than a minute old");
+                        continue;
+                    }
+                    let peer = null;
+                    for (let peerConnection of peerConnections) {
+                        if (peerConnection.targetUserId === signal.addedByUid) {
+                            peer = peerConnection;
+                            break;
+                        }
+                    }
+                    if (!peer) {
+                        peer = createMyPeerConnection(signal.addedByUid, false);
+                    }
+                    peer.receivedMessage(signal);
+                }
+                db().ref(path).update(updates);
+            });
+        }
+
+        function callUser() {
+            let targetUserId = document.getElementById('targetUserId').value;
+            if (!targetUserId) {
+                alert("You must enter targetUserId");
                 return;
-            let signalIds = Object.keys(signals);
-            signalIds.sort((signalId1, signalId2) => signals[signalId1].timestamp - signals[signalId2].timestamp); // oldest entries are at the beginning
-            let updates = {};
-            for (let signalId of signalIds) {
-                updates[signalId] = null;
-                receivedMessage(signals[signalId]);
             }
-            db().ref(path).update(updates);
-        });
-    }
+            createMyPeerConnection(targetUserId, true);
+        }
 
-    function callUser() {
-        targetUserId = document.getElementById('targetUserId').value;
-        console.log("Calling targetUserId=", targetUserId);
-        start(true);
+        function createMyPeerConnection(targetUserId, isCaller) {
+            console.log("createMyPeerConnection targetUserId=", targetUserId, ' isCaller=', isCaller);
+            let index = peerConnections.length;
+            let video = getVideoElement('remotevideo' + index);
+            let peer = new MyPeerConnection(targetUserId, video);
+            peerConnections.push(peer);
+            peer.start(isCaller);
+            return peer;
+        }
+        webRTC.localMediaStream = null;
+        let peerConnections = [];
+        let nav = navigator;
+        navigator.getUserMedia = nav.getUserMedia || nav.webkitGetUserMedia || nav.mozGetUserMedia;
+
+        function getVideoElement(id) {
+            return document.getElementById(id);
+        }
+
+        function setVideoStream(video, stream) {
+            if ('srcObject' in video) {
+                video.srcObject = stream;
+                console.log("Setting srcObject of video stream");
+            } else if (window.URL) {
+                video.src = window.URL.createObjectURL(stream);
+                console.log("Setting src of video stream");
+            } else {
+                video.src = stream;
+                console.log("Setting src of video stream");
+            }
+            cordova.plugins.iosrtc.observeVideo(video); // tell the plugin to handle your video tag manually
+            console.log("Observing video element");
+        }
+        webRTC.setVideoStream = setVideoStream;
+
+        function getUserMedia() {
+            // get the local stream, show it in the local video element and send it
+            console.log('Requesting getUserMedia...');
+            navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: {
+                    deviceId: 'com.apple.avfoundation.avcapturedevice.built-in_video:1',
+                    width: {
+                        min: 320,
+                        max: 640
+                    },
+                    frameRate: {
+                        min: 1.0,
+                        max: 60.0
+                    }
+                }
+            }).then((stream) => {
+                console.log("getUserMedia response: ", stream);
+                setVideoStream(getVideoElement('localvideo'), stream);
+                webRTC.localMediaStream = stream;
+            }, (err) => {
+                console.error("Error in getUserMedia: ", err);
+            });
+        }
+        init();
+        getUserMedia();
+        document.getElementById('callUser').addEventListener('click', callUser);
+
+    })(webRTC || (webRTC = {}));
+
+    class MyPeerConnection {
+        constructor(targetUserId, remoteVideoElement) {
+            this.targetUserId = targetUserId;
+            this.remoteVideoElement = remoteVideoElement;
+            this.pc = null;
+            this.needCreateAnswer = false;
+        }
+        // Code from:
+        // https://www.html5rocks.com/en/tutorials/webrtc/basics/
+        gotDescription(desc) {
+            console.log("gotDescription: ", desc);
+            this.pc.setLocalDescription(desc);
+            webRTC.sendMessage(this.targetUserId, "sdp", desc);
+        }
+        // run start(true) to initiate a call
+        //let count: number = 1;
+        start(isCaller) {
+            console.log("start: isCaller=", isCaller);
+            this.pc = new RTCPeerConnection(MyPeerConnection.configuration);
+            // send any ice candidates to the other peer
+            this.pc.onicecandidate = (evt) => {
+                console.log("onicecandidate: ", evt);
+                if (evt.candidate) {
+                    webRTC.sendMessage(this.targetUserId, "candidate", evt.candidate);
+                }
+            };
+            // once remote stream arrives, show it in the remote video element
+            this.pc.onaddstream = (evt) => {
+                console.log("onaddstream: ", evt);
+                webRTC.setVideoStream(this.remoteVideoElement, evt.stream);
+            };
+            if (isCaller) {
+                this.pc.createOffer(MyPeerConnection.offerOptions).then(this.gotDescription.bind(this), (err) => {
+                    console.error("Error in createOffer: ", err);
+                });
+            } else {
+                // createAnswer can only be called after setRemoteDescription:
+                // Error in createAnswer:  DOMException: CreateAnswer can't be called before SetRemoteDescription.
+                this.needCreateAnswer = true;
+            }
+            this.pc.addStream(webRTC.localMediaStream);
+        }
+
+        //const ONE_MINUTE_MILLIS = 60 * 1000;
+        receivedMessage(signalMsg) {
+            console.log("receivedMessage signalMsg=", signalMsg);
+            let signalType = signalMsg.signalType;
+            let signalData = JSON.parse(signalMsg.signalData);
+            if (signalType == "sdp") {
+                this.pc.setRemoteDescription(new RTCSessionDescription(signalData)).then(() => {
+                    console.log("setRemoteDescription success");
+                }, (err) => {
+                    console.error("Error in setRemoteDescription: ", err);
+                });
+                if (this.needCreateAnswer) {
+                    this.pc.createAnswer().then(this.gotDescription.bind(this), (err) => {
+                        console.error("Error in createAnswer: ", err);
+                    });
+                }
+            } else if (signalType == "candidate") {
+                this.pc.addIceCandidate(new RTCIceCandidate(signalData)).then(() => {
+                    console.log("addIceCandidate success");
+                }, (err) => {
+                    console.error("Error in addIceCandidate: ", err);
+                });
+            }
+        }
     }
-    let pc = null;
-    let targetUserId = null;
-    const configuration = {
+    MyPeerConnection.configuration = {
         'iceServers': [{
             'urls': 'stun:stun.l.google.com:19302'
         }]
     };
-    const offerOptions = {
+    MyPeerConnection.offerOptions = {
         offerToReceiveAudio: 1,
         offerToReceiveVideo: 1
     };
-    let nav = navigator;
-    navigator.getUserMedia = nav.getUserMedia || nav.webkitGetUserMedia || nav.mozGetUserMedia;
+}
 
-    function setVideoStream(isLocal, stream) {
-        let video = document.getElementById(isLocal ? 'localvideo' : 'remotevideo');
-        if ('srcObject' in video) {
-            video.srcObject = stream;
-        } else if (window.URL) {
-            video.src = window.URL.createObjectURL(stream);
-        } else {
-            video.src = stream;
-        }
-    }
-    // Code from:
-    // https://www.html5rocks.com/en/tutorials/webrtc/basics/
-    function gotDescription(desc) {
-        console.log("gotDescription: ", desc);
-        pc.setLocalDescription(desc);
-        sendMessage("sdp", desc);
-    }
-    // run start(true) to initiate a call
-    function start(isCaller) {
-        console.log("start: isCaller=", isCaller);
-        pc = new cordova.plugins.iosrtc.RTCPeerConnection(configuration);
-        // send any ice candidates to the other peer
-        pc.onicecandidate = function (evt) {
-            console.log("onicecandidate: ", evt);
-            if (evt.candidate) {
-                sendMessage("candidate", evt.candidate);
+function test() {
+    let pc = new RTCPeerConnection({
+        iceServers: []
+    });
+
+    document.getElementById('callUser').addEventListener('click', function () {
+        navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: {
+                deviceId: 'com.apple.avfoundation.avcapturedevice.built-in_video:1',
+                width: {
+                    min: 320,
+                    max: 640
+                },
+                frameRate: {
+                    min: 1.0,
+                    max: 60.0
+                }
             }
-        };
-        // once remote stream arrives, show it in the remote video element
-        pc.onaddstream = function (evt) {
-            console.log("onaddstream: ", evt);
-            setVideoStream(false, evt.stream);
-        };
-        // get the local stream, show it in the local video element and send it
-        console.log('Requesting getUserMedia...');
-        cordova.plugins.iosrtc.getUserMedia({
-            "audio": true,
-            "video": true
         }, function (stream) {
-            console.log("getUserMedia response: ", stream);
-            setVideoStream(true, stream);
-            stream.getTracks().forEach(track => pc.addTrack(track, stream));
-            if (isCaller) {
-                pc.createOffer(offerOptions).then(gotDescription, (err) => {
-                    console.error("Error in createOffer: ", err);
-                    writeDebug("Error in createOffer");
-                });
+            console.log('got local MediaStream: ', stream);
+            pc.addStream(stream);
+            let video = document.getElementById('localvideo');
+            if ('srcObject' in video) {
+                video.srcObject = stream;
+                console.log("setting srcObject of localvideo:", video.srcObject);
             } else {
-                pc.createAnswer().then(gotDescription, (err) => {
-                    console.error("Error in createAnswer: ", err);
-                    writeDebug("Error in createAnswer");
-                });
+                video.src = window.URL.createObjectURL(stream);
+                console.log("setting src of localvideo to be", video.src);
             }
+            cordova.plugins.iosrtc.observeVideo(video); // tell the plugin to handle your video tag manually
         }, function (err) {
             console.error("Error in getUserMedia: ", err);
-            writeDebug("Error in getUserMedia");
         });
+    });
+}
+
+document.addEventListener("deviceready", function () {
+    if (window.device.platform === 'iOS') {
+        cordova.plugins.iosrtc.registerGlobals();
     }
-    const ONE_MINUTE_MILLIS = 60 * 1000;
 
-    function receivedMessage(signalMsg) {
-        console.log("receivedMessage signalMsg=", signalMsg);
-        writeDebug("receivedMessage");
-
-        const now = new Date().getTime();
-        if (now - ONE_MINUTE_MILLIS > signalMsg.timestamp) {
-            console.warn("Ignoring signal because it's more than a minute old");
-            return;
-        }
-        if (!pc) {
-            targetUserId = signalMsg.addedByUid;
-            start(false);
-        }
-        let signalType = signalMsg.signalType;
-        let signalData = JSON.parse(signalMsg.signalData);
-        if (signalType == "sdp") {
-            pc.setRemoteDescription(new cordova.plugins.iosrtc.RTCSessionDescription(signalData)).then(() => {
-                console.log("setRemoteDescription success");
-            }, (err) => {
-                console.error("Error in setRemoteDescription: ", err);
-            });
-        } else if (signalType == "candidate") {
-            pc.addIceCandidate(new cordova.plugins.iosrtc.RTCIceCandidate(signalData)).then(() => {
-                console.log("addIceCandidate success");
-            }, (err) => {
-                console.error("Error in addIceCandidate: ", err);
-            });
-        }
-    }
-    init();
-    document.getElementById('callUser').onclick = callUser;
-};
-
-document.addEventListener('DOMContentLoaded', function () {
+    // test();
     main();
 });

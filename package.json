@@ -34,7 +34,8 @@
       "cordova-plugin-iosrtc": {},
       "cordova-plugin-add-swift-support": {},
       "cordova-plugin-sms": {},
-      "cordova-sms-plugin": {}
+      "cordova-sms-plugin": {},
+      "cordova-plugin-console": {}
     }
   },
   "dependencies": {
@@ -44,6 +45,7 @@
     "cordova-plugin-battery-status": "^1.2.5",
     "cordova-plugin-camera": "^2.4.1",
     "cordova-plugin-compat": "^1.2.0",
+    "cordova-plugin-console": "^1.1.0",
     "cordova-plugin-contacts": "^3.0.1",
     "cordova-plugin-device": "^1.1.7",
     "cordova-plugin-dialogs": "^1.3.4",
@@ -54,9 +56,9 @@
     "cordova-plugin-iosrtc": "^4.0.2",
     "cordova-plugin-media-capture": "^1.4.3",
     "cordova-plugin-network-information": "^1.3.4",
+    "cordova-plugin-sms": "^1.0.5",
     "cordova-plugin-vibration": "^2.1.6",
     "cordova-plugin-whitelist": "^1.3.3",
-    "cordova-plugin-sms": "^1.0.5",
     "cordova-sms-plugin": "^0.1.11"
   },
   "devDependencies": {
