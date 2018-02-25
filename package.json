@@ -9,7 +9,7 @@
     ],
     "plugins": {
       "cordova-plugin-contacts": {
-        "CONTACTS_USAGE_DESCRIPTION": "your usage message"
+        "CONTACTS_USAGE_DESCRIPTION": "Games Portal wants to use your contacts"
       },
       "cordova-plugin-battery-status": {},
       "cordova-plugin-camera": {
