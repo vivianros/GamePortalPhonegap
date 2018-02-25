@@ -37,3 +37,51 @@
     at process._tickDomainCallback (internal/process/next_tick.js:128:9)
 [error] 
 [error] Error: An unexpected error has occurred.
+[debug] [2018-02-23T19:45:31.267Z] ----------------------------------------------------------------------
+[debug] [2018-02-23T19:45:31.275Z] Command:       D:\Program Files\nodejs\node.exe C:\Users\Alienware\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-02-23T19:45:31.277Z] CLI Version:   3.17.4
+[debug] [2018-02-23T19:45:31.277Z] Platform:      win32
+[debug] [2018-02-23T19:45:31.277Z] Node Version:  v6.10.1
+[debug] [2018-02-23T19:45:31.279Z] Time:          Fri Feb 23 2018 14:45:31 GMT-0500 (东部标准时间)
+[debug] [2018-02-23T19:45:31.280Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-02-23T19:45:31.373Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-02-23T19:45:31.374Z] > authorizing via signed-in user
+[debug] [2018-02-23T19:45:31.381Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-02-23T19:45:31.381Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/ScPLktbiWSyKwaXFnZn86KXrqNJWWo50ESaqZ29-Ya-WxXGSDiRlMYaATKbp31wd',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Fri Feb 23 2018 14:45:31 GMT-0500 (东部标准时间)
+[debug] [2018-02-23T19:45:31.574Z] <<< HTTP RESPONSE 200
+[debug] [2018-02-23T19:45:31.586Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/universalgamemaker  
+  
+ Fri Feb 23 2018 14:45:31 GMT-0500 (东部标准时间)
+[debug] [2018-02-23T19:45:31.965Z] <<< HTTP RESPONSE 200
+[debug] [2018-02-23T19:45:31.967Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/universalgamemaker/tokens  
+  
+ Fri Feb 23 2018 14:45:31 GMT-0500 (东部标准时间)
+[debug] [2018-02-23T19:45:32.322Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'e:\NYU\multiplayer social games\GamesPortal'...
+[info] 
+[debug] [2018-02-23T19:45:32.330Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/universalgamemaker  
+  
+ Fri Feb 23 2018 14:45:32 GMT-0500 (东部标准时间)
+[debug] [2018-02-23T19:45:32.608Z] <<< HTTP RESPONSE 200
+[debug] [2018-02-23T19:45:32.609Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/144595629077/clients/_:getWebAppConfig  
+  
+ Fri Feb 23 2018 14:45:32 GMT-0500 (东部标准时间)
+[debug] [2018-02-23T19:45:33.039Z] <<< HTTP RESPONSE 200
+[debug] [2018-02-23T19:45:33.301Z] TypeError: Cannot read property 'public' of undefined
+    at Server.<anonymous> (C:\Users\Alienware\AppData\Roaming\npm\node_modules\firebase-tools\lib\serve\hosting.js:34:17)
+    at Server.g (events.js:291:16)
+    at emitNone (events.js:86:13)
+    at Server.emit (events.js:185:7)
+    at emitListeningNT (net.js:1288:10)
+    at _combinedTickCallback (internal/process/next_tick.js:77:11)
+    at process._tickDomainCallback (internal/process/next_tick.js:128:9)
+[error] 
+[error] Error: An unexpected error has occurred.

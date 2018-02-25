@@ -7,7 +7,7 @@
     <author email="support@phonegap.com" href="http://phonegap.com">
         PhoneGap Team
     </author>
-    <content src="contact.html" />
+    <content src="https://vivianros.github.io/GamePortalPhonegap/www/auth.html" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
     <preference name="AndroidLaunchMode" value="singleTask" />
@@ -124,4 +124,5 @@
         </host>
     </universal-links>
     <engine name="android" spec="~7.0.0" />
+    <plugin name="com.dbaq.cordova.contactsPhoneNumbers" spec="~0.0.10" />
 </widget>
