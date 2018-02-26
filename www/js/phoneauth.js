@@ -65,7 +65,7 @@ function onSubmit(){
         // User signed in successfully.
         var user = result.user;
         console.log(user);
-        alert("Login Success Phonenumber: user.phoneNumber");
+        alert("Login Success Phonenumber: "+user.phoneNumber);
         // ...
       }).catch(function (error) {
         // User couldn't sign in (bad verification code?)
