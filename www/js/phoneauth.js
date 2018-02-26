@@ -64,7 +64,8 @@ function onSubmit(){
     confirmationResult.confirm(code).then(function (result) {
         // User signed in successfully.
         var user = result.user;
-        alert("Login Success User: "+user);
+        console.log(user);
+        alert("Login Success");
         // ...
       }).catch(function (error) {
         // User couldn't sign in (bad verification code?)
