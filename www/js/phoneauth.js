@@ -37,7 +37,7 @@ function createAccount(){
     //var defaultAuth = firebase.auth();    
 
     var phoneNum = $("#phone").val();
-    alert(phoneNum);
+    //alert(phoneNum);
    
     firebase.auth().signInWithPhoneNumber(phoneNum, new firebase.auth.RecaptchaVerifier('sign-in-button', {
         'size': 'invisible'
@@ -64,7 +64,7 @@ function onSubmit(){
     confirmationResult.confirm(code).then(function (result) {
         // User signed in successfully.
         var user = result.user;
-        alert("Login Success");
+        alert("Login Success User: "+user);
         // ...
       }).catch(function (error) {
         // User couldn't sign in (bad verification code?)
