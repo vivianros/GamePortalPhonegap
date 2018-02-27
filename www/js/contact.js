@@ -12,7 +12,7 @@ var app = {
     },
 
     sendSms: function(phoneNum) {
-        var number = phoneNum.toString(); /* iOS: ensure number is actually a string */
+        var number = phoneNum; /* iOS: ensure number is actually a string */
         var message = "JOIN THE GAME";
         console.log("number=" + number + ", message= " + message);
 
@@ -33,11 +33,16 @@ var app = {
 };
 
  function onDeviceReady() {           
+     /* 
         var options = new ContactFindOptions();      
         options.filter = "";     
         options.multiple = true;  
         var fields = ["displayName", "name", "phoneNumbers"];                  
         navigator.contacts.find(fields, onSuccess, onError, options);
+*/
+      
+        navigator.contactsPhoneNumbers.list(onSuccess, onError);
+        
     }   
           
          
@@ -47,45 +52,29 @@ function onSuccess(contacts) {
 
 function alertContact(contacts) {
     var start = new Date().getTime();
-    var aResult = [];
-    for (var i = 0; contacts[i]; i++) {
-        console.log("Display Name = " + contacts[i].displayName);   
-  
-        if (contacts[i].phoneNumbers && contacts[i].phoneNumbers.length) {
-            var contactPhoneList =[];
-            for (var j = 0; contacts[i].phoneNumbers[j]; j++) {
-                contactPhoneList.push(
-                    {
-                        'type' :  contacts[i].phoneNumbers[j].type,
-                        'value' : contacts[i].phoneNumbers[j].value
-                    }
-                    );
-                };
-                aResult.push({
-                    name:contacts[i].displayName,
-                    phone:contactPhoneList
-                });
-            };
-        }
-        var li = '';
-        for (var i = 0; aResult[i]; i++) {
-            for (var j = 0 ; aResult[i].phone[j]; j++) {
-                //alert(aResult[i].name +"--------"+ aResult[i].phone[j].type+"-----"+aResult[i].phone[j].value);
-                li += '<li style="text-decoration:none;">'+aResult[i].name+' '+aResult[i].phone[j].value+'  '+'<input type="button" onclick="app.sendSms('+aResult[i].phone[j].value+')" value="INVITE" /></li>';
-            };
-        };
-        $("#contact").html(li);
-        var end = new Date().getTime();
-        var p = '<p id = "time">Total time used to get all contacts: '+(end - start)+'ms</p>';
-        $("#time").html(p);
+    var li = '';
+    console.log(contacts.length + ' contacts found');
+    for(var i = 0; i < contacts.length; i++) {
+       console.log(contacts[i].id + " - " + contacts[i].displayName);
+       for(var j = 0; j < contacts[i].phoneNumbers.length; j++) {
 
-    }     
+          var phone = contacts[i].phoneNumbers[j];
+          console.log("===> " + phone.type + "  " + phone.number + " (" + phone.normalizedNumber+ ")");
+          var legalPhoneNum = phone.number.toString().replace(/[&\|\s\\\*^%$#@\-]/g,"");
+          li += '<li style="text-decoration:none;"><img src="'+contacts[i].thumbnail+'" width="50" height="50"/>'+contacts[i].displayName+' '+phone.number+'  '+'<input type="button" onclick="app.sendSms('+legalPhoneNum+')" value="INVITE" /></li>';
+       }
+    }
+    $("#contact").html(li);
+    var end = new Date().getTime();
+    var p = '<p id = "time">Total time used to get all contacts: '+(end - start)+'ms</p>';
+    $("#time").html(p);
+ }
 
   function onError(contactError) {
-      alert('onError!');
+      alert('List Contacts Error!');
+      console.error(error);
     }     
 
   function intent(){
       onDeviceReady();
     }
-      
