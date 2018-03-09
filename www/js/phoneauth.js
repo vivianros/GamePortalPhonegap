@@ -13,6 +13,8 @@ new_element.setAttribute("type","text/javascript");
 new_element.setAttribute("src","js/trans-compiled.js");
 document.body.appendChild(new_element);
 
+var userRegion = "US";
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -91,42 +93,51 @@ function createAccount(phoneNum){
 function onSubmit(){
     var code = $("#security").val();
     var confirmationResult = window.confirmationResult;
+    var regionCode;
+    var islogin = false;
     confirmationResult.confirm(code).then(function (result) {
         // User signed in successfully.
         var user = result.user;
         console.log(user);
         alert("Login Success Phonenumber: "+user.phoneNumber);
-        var regionCode = getRegionCode(user.phoneNumber);
-        findContacts(regionCode);
+        userRegion = getRegionCode(user.phoneNumber);
+        islogin = true;
         // ...
       }).catch(function (error) {
         // User couldn't sign in (bad verification code?)
         // ...
         alert("Login Failed");
       });
+      if(islogin){
+        findContacts();
+      }
 }
 
-function findContacts(regionCode){
-    navigator.contactsPhoneNumbers.list(onSuccess(regionCode), onError);
+function findContacts(){
+    navigator.contactsPhoneNumbers.list(onSuccess, onError);
 }
 
-function onSuccess(contacts,regionCode) {
-    alertContact(contacts,regionCode);
+function onSuccess(contacts) {
+    alertContact(contacts);
 }
 
-function alertContact(contacts,regionCode) {
+
+function alertContact(contacts) {
     var start = new Date().getTime();
     var li = '';
+    //var regionCode = "US";
     console.log(contacts.length + ' contacts found');
     for(var i = 0; i < contacts.length; i++) {
-       console.log(contacts[i].id + " - " + contacts[i].displayName);
+       //console.log(contacts[i].id + " - " + contacts[i].displayName);
        for(var j = 0; j < contacts[i].phoneNumbers.length; j++) {
 
           var phone = contacts[i].phoneNumbers[j];
           //console.log("===> " + phone.type + "  " + phone.number + " (" + phone.normalizedNumber+ ")");
           //var legalPhoneNum = phone.number.toString().replace(/[&\|\s\\\*^%$#@\-]/g,"");
-          if(isMobileNumber(phone.number)){
-            var phoneNumber = phoneNumberParser(phone,regionCode);
+          var phoneNumber = phoneNumberParser(phone.number,userRegion);
+          //console.log(contacts[i].displayName+","+phoneNumber+","+userRegion+" is Mobile? "+isMobileNumber(phoneNumber));
+          if(isMobileNumber(phoneNumber,userRegion)){
+            console.log("Mobile phone: "+contacts[i].displayName+","+phoneNumber)
             li += '<li style="text-decoration:none;">'+contacts[i].displayName+' '+phoneNumber+'  '+'<input type="button" onclick="app.sendSms('+phoneNumber+')" value="INVITE" /></li>';
           }
           
