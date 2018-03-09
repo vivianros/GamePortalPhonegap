@@ -108,11 +108,11 @@ function onSubmit(){
         // ...
         alert("Login Failed");
       });
-      if(islogin){
+//      if(islogin){
 		console.log("userRegion: "+getRegionCode(number));
 		userRegion = getRegionCode(number);
         findContacts();
-      }
+//      }
 }
 
 function findContacts(){
