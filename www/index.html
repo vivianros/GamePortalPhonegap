@@ -26,23 +26,9 @@
       <p>Enter your Security Code</p>
       <input tpye="number" id="security"></input>
       <input type="button" id = "sign-in-button" onclick="onSubmit();" value="Submit" />
-      <p><a href="#" onclick="findContacts(US);"> Find Contacts</a></p> 
       <p id = "time">Total time used to get all contacts: ms</p>
       <ol id="contact"></ol>    
   </div>
-  <script type="text/javascript" charset="utf-8">
-    function checkPhone(){
-      var phoneNumber = $("#phone").val();
-      var regionCode=$("select option:selected");
-
-      if(isValidNumber(phoneNumber,regionCode)){
-        console.log("here");
-         var number = phoneNumberParser(phoneNumber,regionCode);
-         createAccount(number);
-      }
-
-    }
-  </script>
   
 </body>
 <script src="js/phoneauth.js"></script> 

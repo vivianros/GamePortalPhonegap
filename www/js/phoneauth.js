@@ -45,6 +45,18 @@ var app = {
     },
 };
 
+function checkPhone(){
+    var phoneNumber = $("#phone").val();
+    var regionCode=$("select option:selected");
+
+    if(isValidNumber(phoneNumber,regionCode)){
+       var number = phoneNumberParser(phoneNumber,regionCode);
+       console.log(number);
+       createAccount(number);
+    }
+
+  }
+
 function createAccount(phoneNum){
    // firebase.initializeApp(defaultAppConfig);
 
