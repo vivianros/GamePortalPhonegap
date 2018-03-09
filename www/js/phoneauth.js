@@ -47,7 +47,10 @@ var app = {
 
 function checkPhone(){
     var phoneNumber = $("#phone").val();
-    var regionCode=$("select option:selected");
+    var option = $(".selectCountry option:selected");
+    var regionCode=option.val();
+
+    console.log("phoneNumber: "+phoneNumber+"   regionCode: "+regionCode);
 
     if(isValidNumber(phoneNumber,regionCode)){
        var number = phoneNumberParser(phoneNumber,regionCode);
