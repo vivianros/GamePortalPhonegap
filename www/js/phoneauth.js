@@ -140,7 +140,7 @@ function alertContact(contacts) {
           //console.log(contacts[i].displayName+","+phoneNumber+","+userRegion+" is Mobile? "+isMobileNumber(phoneNumber));
           if(isMobileNumber(phoneNumber,userRegion)){
             console.log("Mobile phone: "+contacts[i].displayName+","+phoneNumber)
-            li += '<li style="text-decoration:none;">'+contacts[i].displayName+' '+phoneNumber+'  '+'<input type="button" onclick="sendSms('+phoneNumber+')" value="INVITE" /></li>';
+            li += '<li style="text-decoration:none;">'+contacts[i].displayName+' '+phoneNumber+'  '+'<input type="button" onclick="app.sendSms('+phoneNumber+')" value="INVITE" /></li>';
           }
           
        }
@@ -154,23 +154,4 @@ function alertContact(contacts) {
   function onError(contactError) {
       alert('List Contacts Error!');
       console.error(error);
-    }
-
- function sendSms(phoneNum) {
-        var number = phoneNum; /* iOS: ensure number is actually a string */
-        var message = "JOIN THE GAME";
-        console.log("number=" + number + ", message= " + message);
-
-        //CONFIGURATION
-        var options = {
-            replaceLineBreaks: false, // true to replace \n by a new line, false by default
-            android: {
-                intent: 'INTENT'  // send SMS with the native android SMS messaging
-                //intent: '' // send SMS without open any other app
-            }
-        };
-
-        var success = function () { alert('Message sent successfully'); };
-        var error = function (e) { alert('Message Failed:' + e); };
-        sms.send(number, message, options, success, error);
-    }
+    }     
