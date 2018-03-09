@@ -140,7 +140,7 @@ function alertContact(contacts) {
           //console.log(contacts[i].displayName+","+phoneNumber+","+userRegion+" is Mobile? "+isMobileNumber(phoneNumber));
           if(isMobileNumber(phoneNumber,userRegion)){
             console.log("Mobile phone: "+contacts[i].displayName+","+phoneNumber)
-            li += '<li style="text-decoration:none;">'+contacts[i].displayName+' '+phoneNumber+'  '+'<input type="button" onclick="app.sendSms('+phoneNumber+')" value="INVITE" /></li>';
+            li += '<li style="text-decoration:none;">'+contacts[i].displayName+' '+phoneNumber+'  '+'<input type="button" onclick="sendSms('+phoneNumber+')" value="INVITE" /></li>';
           }
           
        }
