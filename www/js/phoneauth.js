@@ -93,14 +93,14 @@ function createAccount(phoneNum){
 function onSubmit(){
     var code = $("#security").val();
     var confirmationResult = window.confirmationResult;
-    var regionCode;
     var islogin = false;
+	var number;
     confirmationResult.confirm(code).then(function (result) {
         // User signed in successfully.
         var user = result.user;
         console.log(user);
-        alert("Login Success Phonenumber: "+user.phoneNumber);
-        userRegion = getRegionCode(user.phoneNumber);
+		number = user.phoneNumber;
+        alert("Login Success Phonenumber: "+number);
         islogin = true;
         // ...
       }).catch(function (error) {
@@ -109,6 +109,8 @@ function onSubmit(){
         alert("Login Failed");
       });
       if(islogin){
+		console.log("userRegion: "+getRegionCode(number));
+		userRegion = getRegionCode(number);
         findContacts();
       }
 }
